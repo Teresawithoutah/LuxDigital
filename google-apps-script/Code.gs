@@ -1,4 +1,4 @@
-var SHEET_NAME = 'Leads';
+var SHEET_NAME = 'Emails of those who did NOT submit';
 
 function doPost(e) {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
