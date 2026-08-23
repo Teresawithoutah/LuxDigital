@@ -184,6 +184,7 @@
   .mock-bar .url{
     margin-left:16px; font-family:var(--mono); font-size:0.72rem;
     color:#000; opacity:0.6;
+    width:auto; height:auto; border-radius:0; background:none;
   }
   .mock-body{padding:22px 20px 26px;}
   .chart-wrap{position:relative; height:120px; margin-bottom:22px;}
@@ -231,7 +232,7 @@
   @media (max-width:900px){ .trust-bar-inner{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:520px){ .trust-bar-inner{grid-template-columns:1fr; padding:0 24px;} }
   .trust-item{
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
     padding:14px 20px;
   }
   .trust-icon{
@@ -277,6 +278,7 @@
   }
   .compare{display:grid; grid-template-columns:1fr 1fr; border:1px solid #000;}
   @media (max-width:760px){ .compare{grid-template-columns:1fr;} }
+  .problem > .compare{max-width:800px; margin-left:0; margin-right:auto;}
   .compare-col{padding:44px 40px;}
   @media (min-width:761px){
     .compare-col{padding-top:72px; padding-bottom:72px;}
@@ -707,8 +709,8 @@
     </div>
     <ul class="benefits-list" id="benefits-list">
       <li>8+ years designing and building conversion-focused sites</li>
-      <li>Implemented new designs and features while maintaining front-end and back-end functionality across multiple sites</li>
-      <li>Every build backed by real UX and SEO fundamentals</li>
+      <li>Fluent in every major platform: WordPress, Shopify, Webflow, Custom Code (PHP/React.Js), Netlify, Wix, and Squarespace</li>
+      <li>Hands-on with UX/UI design, heat map config, GA4/GTM tracking, and A/B testing</li>
     </ul>
   </div>
 </section>
@@ -721,7 +723,6 @@
     <div class="showcase-info">
       <span class="service-tag">Healthcare</span>
       <h3>Extension Health</h3>
-      <p>Translated Figma desktop and mobile wireframes to WordPress development.</p>
       <a href="#contact" class="btn btn-primary">Start your project</a>
     </div>
     <div class="showcase-devices">
@@ -796,18 +797,18 @@
   const benefitsData = {
     experience: [
       '8+ years designing and building conversion-focused sites',
-      'Implemented new designs and features while maintaining front-end and back-end functionality across multiple sites',
-      'Every build backed by real UX and SEO fundamentals'
+      'Fluent in every major platform: WordPress, Shopify, Webflow, Custom Code (PHP/React.Js), Netlify, Wix, and Squarespace',
+      'Hands-on with UX/UI design, heat map config, GA4/GTM tracking, and A/B testing'
     ],
     collaboration: [
       'Direct communication — no account managers, no middlemen',
-      'Translated Figma designs into responsive, pixel-accurate UI/UX builds',
+      'Proven ability to work directly with CEO/founders, creative, marketing, and strategy teams',
       'Involved at every step, not just the final reveal'
     ],
     adaptability: [
       'Projects tailored to individual goals and timelines',
-      'Managed QA, A/B testing, and metadata optimization across live builds',
-      'Built and maintained GTM/GA4 event tracking to analyze user behavior and boost campaign performance'
+      'Ability to launch quickly or refine existing builds',
+      'Balanced approach combining structure and agility'
     ]
   };
   const tagButtons = document.querySelectorAll('.tag-btn');
