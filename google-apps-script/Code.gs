@@ -1,5 +1,14 @@
+var SHEET_NAME = 'Leads';
+
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(SHEET_NAME);
+    sheet.appendRow(['Timestamp', 'Email', 'Page']);
+  }
+
   var data = JSON.parse(e.postData.contents);
 
   sheet.appendRow([
