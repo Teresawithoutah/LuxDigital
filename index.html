@@ -796,30 +796,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 (function(){
   // Paste the "Web app" URL from your Google Apps Script deployment here (ends in /exec).
   var GOOGLE_SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyexpiIiuUqo95VmBWxJF0mT8XVcryU7uTcMlpcHN88nWH_-Fc7GTjenRPDvlN453_-QQ/exec';
+  var TYPEFORM_URL = 'https://form.typeform.com/to/lzRc7bwu';
 
   var form = document.getElementById('contact-form');
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    var btn = form.querySelector('button');
     var email = form.email.value;
-
-    btn.textContent = 'Sending…';
-
-    fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Apps Script doesn't return CORS headers; response can't be read, so we assume success
-      headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify({
-        email: email,
-        page: location.href,
-        submittedAt: new Date().toISOString()
-      })
-    }).then(function(){
-      btn.textContent = 'Sent ✓';
-      form.reset();
-    }).catch(function(){
-      btn.textContent = 'Try again';
+    var payload = JSON.stringify({
+      email: email,
+      page: location.href,
+      submittedAt: new Date().toISOString()
     });
+
+    // sendBeacon fires the request and keeps it alive through the navigation below,
+    // unlike fetch which can get cancelled mid-flight when the page unloads.
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(GOOGLE_SHEETS_WEBHOOK_URL, payload);
+    } else {
+      fetch(GOOGLE_SHEETS_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'text/plain;charset=utf-8'},
+        body: payload
+      });
+    }
+
+    window.location.href = TYPEFORM_URL;
   });
 })();
 </script>
