@@ -405,12 +405,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .work .services-head, .work .showcase, .work .work-note{position:relative; z-index:1;}
   .work .section-eyebrow{color:var(--coral-400);}
   .work .section-eyebrow::before{background:var(--coral-400);}
-  .showcase{
+  .showcase{position:relative;}
+  .showcase-track{display:grid; touch-action:pan-y;}
+  .showcase-slide{
+    grid-area:1/1;
     display:grid; grid-template-columns:0.85fr 1.15fr; gap:32px; align-items:end;
+    opacity:0; visibility:hidden; transform:translateX(24px);
+    transition:opacity .5s ease, transform .5s ease, visibility 0s linear .5s;
   }
+  .showcase-slide.is-active{opacity:1; visibility:visible; transform:none; transition:opacity .5s ease, transform .5s ease;}
+  .showcase-slide.from-left:not(.is-active){transform:translateX(-24px);}
+  .showcase-controls{
+    position:absolute; left:0; bottom:0; display:flex; align-items:center; gap:14px; z-index:2;
+  }
+  .showcase-arrow{
+    width:48px; height:48px; display:grid; place-items:center; cursor:pointer;
+    background:transparent; color:#fff; border:1px solid rgba(187,193,252,0.35);
+    transition:background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .showcase-arrow:hover{background:var(--coral-400); border-color:var(--coral-400);}
+  .showcase-count{font-family:var(--mono); font-size:0.8rem; color:var(--lavender-200); letter-spacing:0.08em;}
+  .showcase-count #showcase-current{color:#fff;}
+  .showcase-info{padding-bottom:88px;}
   @media (max-width:900px){
-    .showcase{grid-template-columns:1fr; gap:20px;}
+    .showcase-slide{grid-template-columns:1fr; gap:20px;}
     .showcase-devices{justify-content:flex-start; min-height:auto;}
+    .showcase-info{padding-bottom:0;}
+    .showcase-controls{position:static; margin-top:64px;}
   }
   .showcase-info span.service-tag{margin-bottom:14px; color:var(--periwinkle-400);}
   .showcase-info h3{
@@ -420,6 +441,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .showcase-info p{color:var(--lavender-200); font-size:1rem; line-height:1.65; margin-bottom:30px; max-width:42ch;}
 
   .showcase-devices{position:relative; display:flex; align-items:flex-end; justify-content:center; min-height:420px;}
+  @media (max-width:900px){ .showcase-devices{justify-content:flex-start; min-height:auto; padding-bottom:36px;} }
   .device-desktop{
     width:100%; max-width:520px; background:var(--plum-800);
     border-radius:0; overflow:hidden;
@@ -437,24 +459,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .device-notch{width:46%; height:14px; background:#111; border-radius:0; margin:0 auto;}
   .device-phone .device-screen{height:266px; overflow:hidden; border-radius:0; position:relative; background:#fff; margin-top:4px;}
 
-  .scroll-image{position:absolute; top:0; left:0; width:100%; animation:scrollY 10s ease-in-out infinite;}
+  .device-desktop .device-screen{--screen-h:290px;}
+  .device-phone .device-screen{--screen-h:266px;}
+  .scroll-image{
+    position:absolute; top:0; left:0; width:100%; max-width:none; height:auto;
+    animation:scrollY var(--scroll-dur, 20s) ease-in-out infinite;
+    animation-play-state:paused; will-change:transform;
+  }
+  .showcase-slide.is-active .scroll-image{animation-play-state:running;}
+  .device-screen:hover .scroll-image{animation-play-state:paused;}
   @keyframes scrollY{
     0%, 8%{transform:translateY(0);}
-    45%, 55%{transform:translateY(-42%);}
-    92%,100%{transform:translateY(0);}
+    46%, 54%{transform:translateY(calc(-100% + var(--screen-h)));}
+    92%, 100%{transform:translateY(0);}
   }
-  .mock-page{background:#fff; width:100%;}
-  .mock-nav{display:flex; gap:6px; padding:12px 16px; border-bottom:1px solid var(--hairline);}
-  .mock-nav span{width:7px;height:7px;border-radius:50%;background:var(--hairline);}
-  .mock-hero-block{padding:24px 18px; background:linear-gradient(135deg, var(--violet-500), var(--indigo-950));}
-  .mock-line{height:9px; border-radius:0; background:rgba(255,255,255,0.85); margin-bottom:9px;}
-  .mock-line.lg{width:68%; height:13px;}
-  .mock-line.sm{width:42%;}
-  .mock-pill{width:80px; height:20px; border-radius:0; background:var(--coral-400); margin-top:12px;}
-  .mock-cards{display:flex; gap:8px; padding:18px;}
-  .mock-card{flex:1; height:62px; border-radius:0; background:var(--lavender-200);}
-  .mock-band{height:80px; margin:0 18px 18px; border-radius:0; background:linear-gradient(135deg, var(--periwinkle-400), var(--violet-600));}
-  .mock-footer{height:44px; background:var(--plum-800); margin-top:8px;}
 
   .work-note{
     margin-top:44px; font-size:0.85rem; color:var(--lavender-200); opacity:0.8;
@@ -731,51 +749,85 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="services-head">
     <div class="section-eyebrow">Featured work</div>
   </div>
-  <div class="showcase">
-    <div class="showcase-info">
-      <span class="service-tag">Healthcare</span>
-      <h3>Extension Health</h3>
-      <a href="https://form.typeform.com/to/lzRc7bwu" class="btn btn-primary">Start your project</a>
+  <div class="showcase" id="showcase" role="region" aria-roledescription="carousel" aria-label="Featured work">
+    <div class="showcase-track">
+      <div class="showcase-slide is-active" role="group" aria-roledescription="slide" aria-label="1 of 4: Extension Health">
+        <div class="showcase-info">
+          <span class="service-tag">Healthcare · Longevity</span>
+          <h3>Extension Health</h3>
+          <a href="https://extension.health/" class="btn btn-primary" target="_blank" rel="noopener">Visit extension.health <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="showcase-devices">
+          <div class="device-desktop">
+            <div class="device-bar"><span></span><span></span><span></span></div>
+            <div class="device-screen"><img class="scroll-image" src="work/extension-health-desktop.webp" alt="Extension Health website on desktop" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="device-phone">
+            <div class="device-notch"></div>
+            <div class="device-screen"><img class="scroll-image" src="work/extension-health-mobile.webp" alt="Extension Health website on mobile" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="2 of 4: Hudson Medical" aria-hidden="true" inert>
+        <div class="showcase-info">
+          <span class="service-tag">Healthcare · Pain management</span>
+          <h3>Hudson Medical</h3>
+          <a href="https://medical.hudson.health/" class="btn btn-primary" target="_blank" rel="noopener">Visit medical.hudson.health <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="showcase-devices">
+          <div class="device-desktop">
+            <div class="device-bar"><span></span><span></span><span></span></div>
+            <div class="device-screen"><img class="scroll-image" src="work/hudson-medical-desktop.webp" alt="Hudson Medical website on desktop" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="device-phone">
+            <div class="device-notch"></div>
+            <div class="device-screen"><img class="scroll-image" src="work/hudson-medical-mobile.webp" alt="Hudson Medical website on mobile" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="3 of 4: Hudson Mind" aria-hidden="true" inert>
+        <div class="showcase-info">
+          <span class="service-tag">Healthcare · Mental health</span>
+          <h3>Hudson Mind</h3>
+          <a href="https://mind.hudson.health/" class="btn btn-primary" target="_blank" rel="noopener">Visit mind.hudson.health <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="showcase-devices">
+          <div class="device-desktop">
+            <div class="device-bar"><span></span><span></span><span></span></div>
+            <div class="device-screen"><img class="scroll-image" src="work/hudson-mind-desktop.webp" alt="Hudson Mind website on desktop" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="device-phone">
+            <div class="device-notch"></div>
+            <div class="device-screen"><img class="scroll-image" src="work/hudson-mind-mobile.webp" alt="Hudson Mind website on mobile" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="4 of 4: Symbiome" aria-hidden="true" inert>
+        <div class="showcase-info">
+          <span class="service-tag">Skincare · E-commerce</span>
+          <h3>Symbiome</h3>
+          <a href="https://symbiome.com/" class="btn btn-primary" target="_blank" rel="noopener">Visit symbiome.com <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="showcase-devices">
+          <div class="device-desktop">
+            <div class="device-bar"><span></span><span></span><span></span></div>
+            <div class="device-screen"><img class="scroll-image" src="work/symbiome-desktop.webp" alt="Symbiome website on desktop" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="device-phone">
+            <div class="device-notch"></div>
+            <div class="device-screen"><img class="scroll-image" src="work/symbiome-mobile.webp" alt="Symbiome website on mobile" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="showcase-devices">
-      <div class="device-desktop">
-        <div class="device-bar"><span></span><span></span><span></span></div>
-        <div class="device-screen">
-          <div class="scroll-image">
-            <div class="mock-page">
-              <div class="mock-nav"><span></span><span></span><span></span></div>
-              <div class="mock-hero-block">
-                <div class="mock-line lg"></div>
-                <div class="mock-line sm"></div>
-                <div class="mock-pill"></div>
-              </div>
-              <div class="mock-cards"><div class="mock-card"></div><div class="mock-card"></div><div class="mock-card"></div></div>
-              <div class="mock-band"></div>
-              <div class="mock-cards"><div class="mock-card"></div><div class="mock-card"></div><div class="mock-card"></div></div>
-              <div class="mock-footer"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="device-phone">
-        <div class="device-notch"></div>
-        <div class="device-screen">
-          <div class="scroll-image">
-            <div class="mock-page">
-              <div class="mock-nav"><span></span><span></span><span></span></div>
-              <div class="mock-hero-block">
-                <div class="mock-line lg"></div>
-                <div class="mock-line sm"></div>
-                <div class="mock-pill"></div>
-              </div>
-              <div class="mock-cards"><div class="mock-card"></div><div class="mock-card"></div></div>
-              <div class="mock-band"></div>
-              <div class="mock-cards"><div class="mock-card"></div><div class="mock-card"></div></div>
-              <div class="mock-footer"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="showcase-controls">
+      <button type="button" class="showcase-arrow" data-dir="-1" aria-label="Previous project">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <span class="showcase-count" aria-live="polite"><span id="showcase-current">01</span> / 04</span>
+      <button type="button" class="showcase-arrow" data-dir="1" aria-label="Next project">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
     </div>
   </div>
 </section>
@@ -805,6 +857,72 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   };
   window.addEventListener('scroll', toggleNav, { passive: true });
   toggleNav();
+
+  // Featured work carousel
+  (() => {
+    const root = document.getElementById('showcase');
+    if (!root) return;
+    const slides = [...root.querySelectorAll('.showcase-slide')];
+    const counter = document.getElementById('showcase-current');
+    let index = 0;
+
+    // Scroll speed scales with page length so long sites don't race by
+    const setDuration = img => {
+      const screen = img.parentElement.clientHeight;
+      const travel = img.clientHeight - screen;
+      if (travel > 0) img.style.setProperty('--scroll-dur', Math.max(14, travel / 70) + 's');
+    };
+    root.querySelectorAll('.scroll-image').forEach(img => {
+      if (img.complete) setDuration(img); else img.addEventListener('load', () => setDuration(img), { once: true });
+    });
+
+    const restart = slide => slide.querySelectorAll('.scroll-image').forEach(img => {
+      img.style.animation = 'none'; void img.offsetHeight; img.style.animation = '';
+    });
+
+    const go = (to, dir) => {
+      const next = (to + slides.length) % slides.length;
+      if (next === index) return;
+      slides.forEach(s => s.classList.toggle('from-left', dir < 0));
+      slides[index].classList.remove('is-active');
+      slides[index].setAttribute('aria-hidden', 'true');
+      slides[index].inert = true;
+      index = next;
+      const cur = slides[index];
+      cur.querySelectorAll('img[loading="lazy"]').forEach(img => img.loading = 'eager');
+      cur.classList.add('is-active');
+      cur.removeAttribute('aria-hidden');
+      cur.inert = false;
+      restart(cur);
+      counter.textContent = String(index + 1).padStart(2, '0');
+    };
+
+    root.querySelectorAll('.showcase-arrow').forEach(btn => {
+      btn.addEventListener('click', () => { const d = +btn.dataset.dir; go(index + d, d); });
+    });
+    root.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') go(index - 1, -1);
+      if (e.key === 'ArrowRight') go(index + 1, 1);
+    });
+
+    let startX = null, startY = null;
+    const track = root.querySelector('.showcase-track');
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX, dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+      startX = null;
+    }, { passive: true });
+
+    // Preload the next project's screenshots once the section is near view
+    new IntersectionObserver((entries, obs) => {
+      if (entries.some(e => e.isIntersecting)) {
+        root.querySelectorAll('img[loading="lazy"]').forEach(img => img.loading = 'eager');
+        obs.disconnect();
+      }
+    }, { rootMargin: '400px' }).observe(root);
+  })();
 
   const benefitsData = {
     experience: [
