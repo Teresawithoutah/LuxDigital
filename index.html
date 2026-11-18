@@ -416,22 +416,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .showcase-slide.is-active{opacity:1; visibility:visible; transform:none; transition:opacity .5s ease, transform .5s ease;}
   .showcase-slide.from-left:not(.is-active){transform:translateX(-24px);}
   .showcase-controls{
-    position:absolute; left:0; bottom:0; display:flex; align-items:center; gap:14px; z-index:2;
+    position:absolute; left:0; bottom:0; display:flex; align-items:center; gap:8px; z-index:2;
   }
   .showcase-arrow{
-    width:48px; height:48px; display:grid; place-items:center; cursor:pointer;
-    background:transparent; color:#fff; border:1px solid rgba(187,193,252,0.35);
-    transition:background .2s ease, border-color .2s ease, color .2s ease;
+    width:44px; height:44px; display:grid; place-items:center; cursor:pointer;
+    background:none; border:0; padding:0; color:#fff;
+    transition:color .2s ease, transform .2s ease;
   }
-  .showcase-arrow:hover{background:var(--coral-400); border-color:var(--coral-400);}
-  .showcase-count{font-family:var(--mono); font-size:0.8rem; color:var(--lavender-200); letter-spacing:0.08em;}
-  .showcase-count #showcase-current{color:#fff;}
-  .showcase-info{padding-bottom:88px;}
+  .showcase-arrow:first-child{margin-left:-9px;}
+  .showcase-arrow:hover{color:var(--coral-400);}
+  .showcase-arrow[data-dir="-1"]:hover{transform:translateX(-3px);}
+  .showcase-arrow[data-dir="1"]:hover{transform:translateX(3px);}
+  .visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+  .showcase-info{padding-bottom:80px;}
   @media (max-width:900px){
     .showcase-slide{grid-template-columns:1fr; gap:20px;}
-    .showcase-devices{justify-content:flex-start; min-height:auto;}
     .showcase-info{padding-bottom:0;}
-    .showcase-controls{position:static; margin-top:64px;}
+    .showcase-controls{position:static; margin-top:56px;}
   }
   .showcase-info span.service-tag{margin-bottom:14px; color:var(--periwinkle-400);}
   .showcase-info h3{
@@ -440,8 +441,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   .showcase-info p{color:var(--lavender-200); font-size:1rem; line-height:1.65; margin-bottom:30px; max-width:42ch;}
 
-  .showcase-devices{position:relative; display:flex; align-items:flex-end; justify-content:center; min-height:420px;}
-  @media (max-width:900px){ .showcase-devices{justify-content:flex-start; min-height:auto; padding-bottom:36px;} }
+  .showcase-devices{position:relative; display:flex; align-items:flex-end; justify-content:center; min-height:440px;}
+  @media (max-width:900px){ .showcase-devices{justify-content:flex-start; min-height:auto; padding-bottom:48px;} }
   .device-desktop{
     width:100%; max-width:520px; background:var(--plum-800);
     border-radius:0; overflow:hidden;
@@ -449,30 +450,51 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   }
   .device-bar{display:flex; gap:6px; padding:10px 14px; background:var(--indigo-950);}
   .device-bar span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.3);}
-  .device-desktop .device-screen{height:290px; overflow:hidden; position:relative; background:#fff;}
 
+  /* Scrollable screens: auto-scroll via JS, visitors can scroll them by hand */
+  .device-screen{
+    position:relative; background:#fff;
+    overflow-y:auto; overflow-x:hidden; overscroll-behavior-y:auto;
+    scrollbar-width:none; -ms-overflow-style:none;
+    cursor:ns-resize;
+  }
+  .device-screen::-webkit-scrollbar{display:none;}
+  .device-screen img{display:block; width:100%; max-width:none; height:auto; user-select:none; -webkit-user-drag:none;}
+  .device-screen:focus-visible{outline:2px solid var(--coral-400); outline-offset:-2px;}
+  .device-desktop .device-screen{height:290px;}
+
+  /* Phone: modern smartphone with rounded titanium frame, island and side buttons */
   .device-phone{
-    position:absolute; right:2%; bottom:-36px; width:148px;
-    background:#111; border-radius:0; padding:7px;
-    border:3px solid rgba(187,193,252,0.16);
+    position:absolute; right:1%; bottom:-48px; width:158px;
+    padding:5px; border-radius:30px;
+    background:linear-gradient(145deg, #5b5b66 0%, #2a2a31 22%, #18181c 50%, #2a2a31 78%, #5b5b66 100%);
+    box-shadow:0 30px 60px -18px rgba(0,0,0,0.65), 0 10px 24px -10px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08);
   }
-  .device-notch{width:46%; height:14px; background:#111; border-radius:0; margin:0 auto;}
-  .device-phone .device-screen{height:266px; overflow:hidden; border-radius:0; position:relative; background:#fff; margin-top:4px;}
-
-  .device-desktop .device-screen{--screen-h:290px;}
-  .device-phone .device-screen{--screen-h:266px;}
-  .scroll-image{
-    position:absolute; top:0; left:0; width:100%; max-width:none; height:auto;
-    animation:scrollY var(--scroll-dur, 20s) ease-in-out infinite;
-    animation-play-state:paused; will-change:transform;
+  .phone-body{
+    position:relative; background:#050506; border-radius:25px; padding:5px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.05);
   }
-  .showcase-slide.is-active .scroll-image{animation-play-state:running;}
-  .device-screen:hover .scroll-image{animation-play-state:paused;}
-  @keyframes scrollY{
-    0%, 8%{transform:translateY(0);}
-    46%, 54%{transform:translateY(calc(-100% + var(--screen-h)));}
-    92%, 100%{transform:translateY(0);}
+  .device-phone .device-screen{height:300px; border-radius:20px; -webkit-mask-image:-webkit-radial-gradient(white, black);}
+  .phone-island{
+    position:absolute; top:11px; left:50%; transform:translateX(-50%); z-index:2;
+    width:44px; height:13px; border-radius:10px; background:#000;
+    pointer-events:none;
   }
+  .phone-island::after{
+    content:''; position:absolute; right:5px; top:50%; transform:translateY(-50%);
+    width:5px; height:5px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #3a4a7a 0%, #0c0f1d 60%);
+  }
+  .phone-home{
+    position:absolute; bottom:9px; left:50%; transform:translateX(-50%); z-index:2;
+    width:48px; height:3px; border-radius:3px; background:rgba(0,0,0,0.55);
+    pointer-events:none;
+  }
+  .phone-btn{position:absolute; width:3px; border-radius:2px; background:linear-gradient(90deg,#2a2a31,#5b5b66);}
+  .phone-btn-action{left:-2px; top:62px; height:16px; border-radius:2px 0 0 2px;}
+  .phone-btn-vol-up{left:-2px; top:92px; height:30px; border-radius:2px 0 0 2px;}
+  .phone-btn-vol-down{left:-2px; top:130px; height:30px; border-radius:2px 0 0 2px;}
+  .phone-btn-power{right:-2px; top:104px; height:44px; border-radius:0 2px 2px 0; background:linear-gradient(90deg,#5b5b66,#2a2a31);}
 
   .work-note{
     margin-top:44px; font-size:0.85rem; color:var(--lavender-200); opacity:0.8;
@@ -755,16 +777,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="showcase-info">
           <span class="service-tag">Healthcare · Longevity</span>
           <h3>Extension Health</h3>
-          <a href="https://extension.health/" class="btn btn-primary" target="_blank" rel="noopener">Learn more <span aria-hidden="true">↗</span></a>
+          <a href="https://extension.health/" class="btn btn-primary" target="_blank" rel="noopener">Learn more</a>
         </div>
         <div class="showcase-devices">
           <div class="device-desktop">
             <div class="device-bar"><span></span><span></span><span></span></div>
-            <div class="device-screen"><img class="scroll-image" src="work/extension-health-desktop.webp" alt="Extension Health website on desktop" loading="lazy" decoding="async"></div>
+            <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Extension Health website on desktop"><img src="work/extension-health-desktop.webp" alt="Extension Health website on desktop" loading="lazy" decoding="async"></div>
           </div>
           <div class="device-phone">
-            <div class="device-notch"></div>
-            <div class="device-screen"><img class="scroll-image" src="work/extension-health-mobile.webp" alt="Extension Health website on mobile" loading="lazy" decoding="async"></div>
+            <span class="phone-btn phone-btn-action"></span><span class="phone-btn phone-btn-vol-up"></span><span class="phone-btn phone-btn-vol-down"></span><span class="phone-btn phone-btn-power"></span>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Extension Health website on mobile"><img src="work/extension-health-mobile.webp" alt="Extension Health website on mobile" loading="lazy" decoding="async"></div>
+              <div class="phone-home"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -772,62 +798,74 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="showcase-info">
           <span class="service-tag">Healthcare · Pain management</span>
           <h3>Hudson Medical</h3>
-          <a href="https://medical.hudson.health/" class="btn btn-primary" target="_blank" rel="noopener">Learn more <span aria-hidden="true">↗</span></a>
+          <a href="https://medical.hudson.health/" class="btn btn-primary" target="_blank" rel="noopener">Learn more</a>
         </div>
         <div class="showcase-devices">
           <div class="device-desktop">
             <div class="device-bar"><span></span><span></span><span></span></div>
-            <div class="device-screen"><img class="scroll-image" src="work/hudson-medical-desktop.webp" alt="Hudson Medical website on desktop" loading="lazy" decoding="async"></div>
+            <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Hudson Medical website on desktop"><img src="work/hudson-medical-desktop.webp" alt="Hudson Medical website on desktop" loading="lazy" decoding="async"></div>
           </div>
           <div class="device-phone">
-            <div class="device-notch"></div>
-            <div class="device-screen"><img class="scroll-image" src="work/hudson-medical-mobile.webp" alt="Hudson Medical website on mobile" loading="lazy" decoding="async"></div>
+            <span class="phone-btn phone-btn-action"></span><span class="phone-btn phone-btn-vol-up"></span><span class="phone-btn phone-btn-vol-down"></span><span class="phone-btn phone-btn-power"></span>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Hudson Medical website on mobile"><img src="work/hudson-medical-mobile.webp" alt="Hudson Medical website on mobile" loading="lazy" decoding="async"></div>
+              <div class="phone-home"></div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="3 of 4: Hudson Mind" aria-hidden="true" inert>
-        <div class="showcase-info">
-          <span class="service-tag">Healthcare · Mental health</span>
-          <h3>Hudson Mind</h3>
-          <a href="https://mind.hudson.health/" class="btn btn-primary" target="_blank" rel="noopener">Learn more <span aria-hidden="true">↗</span></a>
-        </div>
-        <div class="showcase-devices">
-          <div class="device-desktop">
-            <div class="device-bar"><span></span><span></span><span></span></div>
-            <div class="device-screen"><img class="scroll-image" src="work/hudson-mind-desktop.webp" alt="Hudson Mind website on desktop" loading="lazy" decoding="async"></div>
-          </div>
-          <div class="device-phone">
-            <div class="device-notch"></div>
-            <div class="device-screen"><img class="scroll-image" src="work/hudson-mind-mobile.webp" alt="Hudson Mind website on mobile" loading="lazy" decoding="async"></div>
-          </div>
-        </div>
-      </div>
-      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="4 of 4: Symbiome" aria-hidden="true" inert>
+      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="3 of 4: Symbiome" aria-hidden="true" inert>
         <div class="showcase-info">
           <span class="service-tag">Skincare · E-commerce</span>
           <h3>Symbiome</h3>
-          <a href="https://symbiome.com/" class="btn btn-primary" target="_blank" rel="noopener">Learn more <span aria-hidden="true">↗</span></a>
+          <a href="https://symbiome.com/" class="btn btn-primary" target="_blank" rel="noopener">Learn more</a>
         </div>
         <div class="showcase-devices">
           <div class="device-desktop">
             <div class="device-bar"><span></span><span></span><span></span></div>
-            <div class="device-screen"><img class="scroll-image" src="work/symbiome-desktop.webp" alt="Symbiome website on desktop" loading="lazy" decoding="async"></div>
+            <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Symbiome website on desktop"><img src="work/symbiome-desktop.webp" alt="Symbiome website on desktop" loading="lazy" decoding="async"></div>
           </div>
           <div class="device-phone">
-            <div class="device-notch"></div>
-            <div class="device-screen"><img class="scroll-image" src="work/symbiome-mobile.webp" alt="Symbiome website on mobile" loading="lazy" decoding="async"></div>
+            <span class="phone-btn phone-btn-action"></span><span class="phone-btn phone-btn-vol-up"></span><span class="phone-btn phone-btn-vol-down"></span><span class="phone-btn phone-btn-power"></span>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Symbiome website on mobile"><img src="work/symbiome-mobile.webp" alt="Symbiome website on mobile" loading="lazy" decoding="async"></div>
+              <div class="phone-home"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-slide" role="group" aria-roledescription="slide" aria-label="4 of 4: Hudson Mind" aria-hidden="true" inert>
+        <div class="showcase-info">
+          <span class="service-tag">Healthcare · Mental health</span>
+          <h3>Hudson Mind</h3>
+          <a href="https://mind.hudson.health/about-us/" class="btn btn-primary" target="_blank" rel="noopener">Learn more</a>
+        </div>
+        <div class="showcase-devices">
+          <div class="device-desktop">
+            <div class="device-bar"><span></span><span></span><span></span></div>
+            <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Hudson Mind website on desktop"><img src="work/hudson-mind-desktop.webp" alt="Hudson Mind website on desktop" loading="lazy" decoding="async"></div>
+          </div>
+          <div class="device-phone">
+            <span class="phone-btn phone-btn-action"></span><span class="phone-btn phone-btn-vol-up"></span><span class="phone-btn phone-btn-vol-down"></span><span class="phone-btn phone-btn-power"></span>
+            <div class="phone-body">
+              <div class="phone-island"></div>
+              <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Hudson Mind website on mobile"><img src="work/hudson-mind-mobile.webp" alt="Hudson Mind website on mobile" loading="lazy" decoding="async"></div>
+              <div class="phone-home"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="showcase-controls">
       <button type="button" class="showcase-arrow" data-dir="-1" aria-label="Previous project">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
       </button>
-      <span class="showcase-count" aria-live="polite"><span id="showcase-current">01</span> / 04</span>
       <button type="button" class="showcase-arrow" data-dir="1" aria-label="Next project">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
+      <span class="visually-hidden" aria-live="polite" id="showcase-status"></span>
     </div>
   </div>
 </section>
@@ -863,23 +901,54 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const root = document.getElementById('showcase');
     if (!root) return;
     const slides = [...root.querySelectorAll('.showcase-slide')];
-    const counter = document.getElementById('showcase-current');
+    const status = document.getElementById('showcase-status');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let index = 0;
 
-    // Scroll speed scales with page length so long sites don't race by
-    const setDuration = img => {
-      const screen = img.parentElement.clientHeight;
-      const travel = img.clientHeight - screen;
-      if (travel > 0) img.style.setProperty('--scroll-dur', Math.max(14, travel / 70) + 's');
+    // ---- Auto-scrolling screens (visitors can take over by scrolling) ----
+    const SPEED = 90;          // px per second
+    const HOLD = 1600;         // ms pause at top and bottom
+    const screens = [...root.querySelectorAll('.device-screen')].map(el => ({
+      el, slide: el.closest('.showcase-slide'), pos: 0, dir: 1, holdUntil: 0, stopped: false, hover: false
+    }));
+
+    const stop = s => { s.stopped = true; };
+    screens.forEach(s => {
+      // Any manual scroll intent hands control to the visitor
+      ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(evt =>
+        s.el.addEventListener(evt, () => stop(s), { passive: true }));
+      s.el.addEventListener('mouseenter', () => { s.hover = true; });
+      s.el.addEventListener('mouseleave', () => { s.hover = false; s.pos = s.el.scrollTop; });
+    });
+
+    const reset = slide => screens.forEach(s => {
+      if (s.slide !== slide) return;
+      s.el.scrollTop = 0; s.pos = 0; s.dir = 1; s.stopped = false;
+      s.holdUntil = performance.now() + HOLD;
+    });
+
+    let visible = false, last = 0, raf = null;
+    const tick = now => {
+      const dt = Math.min(64, now - (last || now)); last = now;
+      screens.forEach(s => {
+        if (s.slide !== slides[index] || s.stopped || s.hover || now < s.holdUntil) return;
+        const max = s.el.scrollHeight - s.el.clientHeight;
+        if (max <= 0) return;
+        s.pos += s.dir * SPEED * dt / 1000;
+        if (s.pos >= max) { s.pos = max; s.dir = -1; s.holdUntil = now + HOLD; }
+        else if (s.pos <= 0) { s.pos = 0; s.dir = 1; s.holdUntil = now + HOLD; }
+        s.el.scrollTop = s.pos;
+      });
+      raf = requestAnimationFrame(tick);
     };
-    root.querySelectorAll('.scroll-image').forEach(img => {
-      if (img.complete) setDuration(img); else img.addEventListener('load', () => setDuration(img), { once: true });
-    });
+    const run = () => {
+      const should = visible && !document.hidden && !reduceMotion;
+      if (should && !raf) { last = 0; raf = requestAnimationFrame(tick); }
+      if (!should && raf) { cancelAnimationFrame(raf); raf = null; }
+    };
+    document.addEventListener('visibilitychange', run);
 
-    const restart = slide => slide.querySelectorAll('.scroll-image').forEach(img => {
-      img.style.animation = 'none'; void img.offsetHeight; img.style.animation = '';
-    });
-
+    // ---- Slide navigation (loops endlessly in both directions) ----
     const go = (to, dir) => {
       const next = (to + slides.length) % slides.length;
       if (next === index) return;
@@ -893,35 +962,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       cur.classList.add('is-active');
       cur.removeAttribute('aria-hidden');
       cur.inert = false;
-      restart(cur);
-      counter.textContent = String(index + 1).padStart(2, '0');
+      reset(cur);
+      status.textContent = cur.getAttribute('aria-label');
     };
 
     root.querySelectorAll('.showcase-arrow').forEach(btn => {
       btn.addEventListener('click', () => { const d = +btn.dataset.dir; go(index + d, d); });
     });
     root.addEventListener('keydown', e => {
+      if (e.target.classList.contains('device-screen')) return;
       if (e.key === 'ArrowLeft') go(index - 1, -1);
       if (e.key === 'ArrowRight') go(index + 1, 1);
     });
 
+    // Horizontal swipe changes slides; vertical swipes on a screen scroll it
     let startX = null, startY = null;
     const track = root.querySelector('.showcase-track');
     track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
     track.addEventListener('touchend', e => {
       if (startX === null) return;
       const dx = e.changedTouches[0].clientX - startX, dy = e.changedTouches[0].clientY - startY;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) go(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
       startX = null;
     }, { passive: true });
 
-    // Preload the next project's screenshots once the section is near view
-    new IntersectionObserver((entries, obs) => {
-      if (entries.some(e => e.isIntersecting)) {
-        root.querySelectorAll('img[loading="lazy"]').forEach(img => img.loading = 'eager');
-        obs.disconnect();
-      }
+    // Load all screenshots once the section is near, and only animate while it's on screen
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) root.querySelectorAll('img[loading="lazy"]').forEach(img => img.loading = 'eager');
+      });
     }, { rootMargin: '400px' }).observe(root);
+    new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting;
+      run();
+    }).observe(root);
+    reset(slides[0]);
   })();
 
   const benefitsData = {
