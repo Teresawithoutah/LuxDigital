@@ -463,6 +463,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .device-screen:focus-visible{outline:2px solid var(--coral-400); outline-offset:-2px;}
   .device-desktop .device-screen{height:290px;}
 
+  /* Live marquee layered over a screenshot (recreates sites' moving logo bands) */
+  .screen-page{position:relative;}
+  .screen-marquee{position:absolute; left:0; right:0; overflow:hidden; pointer-events:none;}
+  .screen-marquee-track{
+    height:100%; background-repeat:repeat-x; background-size:50% 100%;
+    animation:screenMarquee 30s linear infinite;
+  }
+  @keyframes screenMarquee{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+
   /* Phone: modern smartphone with rounded titanium frame, island and side buttons */
   .device-phone{
     position:absolute; right:1%; bottom:-48px; width:158px;
@@ -824,13 +833,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="showcase-devices">
           <div class="device-desktop">
             <div class="device-bar"><span></span><span></span><span></span></div>
-            <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Symbiome website on desktop"><img src="work/symbiome-desktop.webp" alt="Symbiome website on desktop" loading="lazy" decoding="async"></div>
+            <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Symbiome website on desktop"><div class="screen-page"><img src="work/symbiome-desktop.webp" alt="Symbiome website on desktop" loading="lazy" decoding="async"><div class="screen-marquee" aria-hidden="true" style="top:33.6742%; height:3.0795%;"><div class="screen-marquee-track" style="width:257.2222%; background-image:url(work/symbiome-desktop-marquee.webp);"></div></div></div></div>
           </div>
           <div class="device-phone">
             <span class="phone-btn phone-btn-action"></span><span class="phone-btn phone-btn-vol-up"></span><span class="phone-btn phone-btn-vol-down"></span><span class="phone-btn phone-btn-power"></span>
             <div class="phone-body">
               <div class="phone-island"></div>
-              <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Symbiome website on mobile"><img src="work/symbiome-mobile.webp" alt="Symbiome website on mobile" loading="lazy" decoding="async"></div>
+              <div class="device-screen" tabindex="0" aria-label="Scrollable preview of the Symbiome website on mobile"><div class="screen-page"><img src="work/symbiome-mobile.webp" alt="Symbiome website on mobile" loading="lazy" decoding="async"><div class="screen-marquee" aria-hidden="true" style="top:25.214%; height:3.1051%;"><div class="screen-marquee-track" style="width:949.7436%; background-image:url(work/symbiome-mobile-marquee.webp);"></div></div></div></div>
               <div class="phone-home"></div>
             </div>
           </div>
